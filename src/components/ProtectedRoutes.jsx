@@ -1,9 +1,11 @@
-import React from 'react'
+import { Navigate } from "react-router";
 
-const ProtectedRoutes = () => {
-  return (
-    <div>ProtectedRoutes</div>
-  )
-}
+const ProtectedRoutes = ({ children }) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+};
 
-export default ProtectedRoutes
+export default ProtectedRoutes;

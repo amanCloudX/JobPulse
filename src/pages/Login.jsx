@@ -22,6 +22,7 @@ const Login = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
+    setError("");
     if (!form.email || !form.password) {
       setError("All Fields Are Required");
       return;
@@ -98,6 +99,17 @@ const Login = () => {
             <button className="bg-pink-400 text-white py-2 rounded-md hover:bg-pink-500 transition">
               LOGIN →
             </button>
+            <div className="mt-4 text-center">
+              <p className="text-sm">
+                New User?{" "}
+                <span
+                  onClick={() => navigate("/register")}
+                  className="text-blue-500 cursor-pointer hover:underline"
+                >
+                  Register Here
+                </span>
+              </p>
+            </div>
           </div>
 
           {/* RIGHT SIDE - IMAGE */}
