@@ -26,38 +26,33 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
+    // validation
+    if (
+      !formData.name ||
+      !formData.email ||
+      !formData.password ||
+      !formData.role
+    ) {
+      setError("All fields are required");
+      return;
+    }
 
-      // ✅ FRONTEND VALIDATION (VERY IMPORTANT)
-      if (
-        !formData.name ||
-        !formData.email ||
-        !formData.password ||
-        !formData.role
-      ) {
-        setError("All fields are required");
-        return;
-      }
+    try {
+      const response = await API.post("/auth/register", formData);
 
-      try {
-        const response = await API.post("/register", formData);
+      console.log("SUCCESS:", response.data);
 
-        console.log(response.data);
+      setError("");
+      alert("User Registered Successfully");
+      navigate("/"); // optional redirect
+    } catch (error) {
+      console.log("ERROR:", error);
 
-        setError("");
-        alert("User Registered Successfully");
-      } catch (error) {
-        console.log(error.response?.data || error.message);
+      const backendError =
+        error.response?.data?.message || error.response?.data?.error;
 
-        const backendError =
-          error.response?.data?.message ||
-          error.response?.data?.error ||
-          error.response?.data?.msg;
-
-        setError(backendError || "Something went wrong");
-      }
-    };
+      setError(backendError || "Something went wrong");
+    }
   };
   return (
     <>
@@ -118,7 +113,7 @@ bg-clip-text text-transparent font-bold text-center mb-6"
               onChange={handleChange}
               className="w-full border p-2 rounded "
             >
-              <option value="select your role">Select your role</option>
+              <option value="">Select your role</option>
               <option value="user">User</option>
               <option value="recruiter">Recruiter</option>
               <option value="admin">Admin</option>

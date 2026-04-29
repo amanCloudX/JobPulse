@@ -30,7 +30,7 @@ const Login = () => {
     }
 
     try {
-      const response = await API.post("/login", form, {
+      const response = await API.post("/auth/login", form, {
         headers: {
           "Content-Type": "application/json",
         },

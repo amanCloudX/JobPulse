@@ -15,7 +15,7 @@ const Dashboard = () => {
     const fetchApplications = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await API.get("/myapplications", {
+        const res = await API.get("/applications/myapplications", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -25,6 +25,7 @@ const Dashboard = () => {
         setLoading(false);
       } catch (error) {
         console.log(error);
+      } finally {
         setLoading(false);
       }
     };
@@ -40,11 +41,16 @@ const Dashboard = () => {
   //stats calculation
 
   const applied =
-    applications.filter((a) => a.status === "Applied").length || 0;
+    applications.filter((a) => a.status?.toLowerCase() === "applied").length ||
+    0;
+
   const interview =
-    applications.filter((a) => a.status === "Interview").length || 0;
+    applications.filter((a) => a.status?.toLowerCase() === "interview")
+      .length || 0;
+
   const rejected =
-    applications.filter((a) => a.status === "Rejected").length || 0;
+    applications.filter((a) => a.status?.toLowerCase() === "rejected").length ||
+    0;
 
   return (
     <>
@@ -53,10 +59,30 @@ const Dashboard = () => {
         <div className="w-64 bg-gray-900 text-white p-5 ">
           <h1 className="text-xl font-bold mb-6">Job Pulse</h1>
           <ul className="space-y-4">
-            <li  onClick={() => navigate("/dashboard")} className="cursor-pointer hover:text-blue-400">Dashboard</li>
-            <li  onClick={() => navigate("/jobs")} className="cursor-pointer hover:text-blue-400">Jobs</li>
-            <li  onClick={() => navigate("/myapplications")} className="cursor-pointer hover:text-blue-400">Applications</li>
-            <li  onClick={() => navigate("/profile")} className="cursor-pointer hover:text-blue-400">Profile</li>
+            <li
+              onClick={() => navigate("/dashboard")}
+              className="cursor-pointer hover:text-blue-400"
+            >
+              Dashboard
+            </li>
+            <li
+              onClick={() => navigate("/jobs")}
+              className="cursor-pointer hover:text-blue-400"
+            >
+              Jobs
+            </li>
+            <li
+              onClick={() => navigate("/myapplications")}
+              className="cursor-pointer hover:text-blue-400"
+            >
+              Applications
+            </li>
+            <li
+              onClick={() => navigate("/profile")}
+              className="cursor-pointer hover:text-blue-400"
+            >
+              Profile
+            </li>
           </ul>
 
           <button
@@ -111,8 +137,8 @@ const Dashboard = () => {
                     <tbody>
                       {applications.map((app) => (
                         <tr key={app._id} className="border-b hover:bg-gray-50">
-                          <td className="py-2">{app.job.title}</td>
-                          <td>{app.job.company}</td>
+                          <td className="py-2">{app.job?.title}</td>
+                          <td>{app.job?.company}</td>
                           <td>
                             <span
                               className={`px-2 py-1 rounded text-white ${
