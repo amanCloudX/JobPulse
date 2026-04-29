@@ -72,7 +72,7 @@ const Login = () => {
                 type="email"
                 name="email"
                 value={form.email}
-                placeholder="login@gmail.com"
+                placeholder="Enter Email Here"
                 onChange={handleChange}
                 className="w-full mt-1 p-2 border rounded-md outline-none focus:ring-2 focus:ring-blue-400"
               />
@@ -85,7 +85,7 @@ const Login = () => {
                 type="password"
                 name="password"
                 value={form.password}
-                placeholder="********"
+                placeholder="Enter Password Here"
                 onChange={handleChange}
                 className="w-full mt-1 p-2 border rounded-md outline-none focus:ring-2 focus:ring-blue-400"
               />
