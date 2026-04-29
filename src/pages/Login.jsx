@@ -2,6 +2,7 @@ import { useState } from "react";
 import Logo from "../components/logo";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API from "../api/axios";
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -29,7 +30,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:4000/login", form, {
+      const response = await API.post("/login", form, {
         headers: {
           "Content-Type": "application/json",
         },

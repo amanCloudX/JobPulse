@@ -4,6 +4,7 @@ import { Mail, User, LockKeyhole } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import API from "../api/axios";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -25,8 +26,8 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:4000/register",
+      const response = await API.post(
+        "/register",
         formData,
       );
       console.log(response.data);
@@ -44,11 +45,15 @@ const Register = () => {
 
   return (
     <>
-      <div className="h-screen w-screen flex justify-center items-center bg-cover bg-[url('https://thumbs.dreamstime.com/z/looking-job-13050588.jpg?w=768')]">
+      <div className="h-screen w-screen flex justify-center items-center bg-cover bg-[url('https://wallpapers.com/images/hd/professional-photo-background-1920-x-1229-e3s6g0zxa6qx502x.jpg')]">
         <div className="bg-transparent p-8 rounded-lg shadow-md w-100 ">
-          <h2 className="text-xl  bg-gradient-to-r 
+          <h2
+            className="text-xl  bg-gradient-to-r 
 from-blue-500 to-purple-600 
-bg-clip-text text-transparent font-bold text-center mb-6">Register Here</h2>
+bg-clip-text text-transparent font-bold text-center mb-6"
+          >
+            Register Here
+          </h2>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {/* Name */}
@@ -97,7 +102,6 @@ bg-clip-text text-transparent font-bold text-center mb-6">Register Here</h2>
               onChange={handleChange}
               className="w-full border p-2 rounded "
             >
-              <option value="">Select your role</option>
               <option value="user">User</option>
               <option value="recruiter">Recruiter</option>
               <option value="admin">Admin</option>
@@ -113,16 +117,16 @@ bg-clip-text text-transparent font-bold text-center mb-6">Register Here</h2>
             )}
 
             <div className="text-center mt-2">
-  <p className="text-sm">
-    Already have an account?{" "}
-    <span
-      onClick={() => navigate("/")}
-      className="text-blue-500 cursor-pointer hover:underline font-semibold"
-    >
-      Sign In
-    </span>
-  </p>
-</div>
+              <p className="text-sm">
+                Already have an account?{" "}
+                <span
+                  onClick={() => navigate("/")}
+                  className="text-blue-500 cursor-pointer hover:underline font-semibold"
+                >
+                  Sign In
+                </span>
+              </p>
+            </div>
           </form>
         </div>
       </div>

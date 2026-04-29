@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../api/axios";
 
 const Dashboard = () => {
   const [applications, setApplications] = useState([]);
@@ -14,7 +15,7 @@ const Dashboard = () => {
     const fetchApplications = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:4000/myapplications", {
+        const res = await API.get("/myapplications", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
