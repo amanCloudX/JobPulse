@@ -26,35 +26,39 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-   const handleSubmit = async (e) => {
-  e.preventDefault();
+    const handleSubmit = async (e) => {
+      e.preventDefault();
 
-  // ✅ FRONTEND VALIDATION (VERY IMPORTANT)
-  if (!formData.name || !formData.email || !formData.password || !formData.role) {
-    setError("All fields are required");
-    return;
-  }
+      // ✅ FRONTEND VALIDATION (VERY IMPORTANT)
+      if (
+        !formData.name ||
+        !formData.email ||
+        !formData.password ||
+        !formData.role
+      ) {
+        setError("All fields are required");
+        return;
+      }
 
-  try {
-    const response = await API.post("/register", formData);
+      try {
+        const response = await API.post("/register", formData);
 
-    console.log(response.data);
+        console.log(response.data);
 
-    setError("");
-    alert("User Registered Successfully");
+        setError("");
+        alert("User Registered Successfully");
+      } catch (error) {
+        console.log(error.response?.data || error.message);
 
-  } catch (error) {
-    console.log(error.response?.data || error.message);
+        const backendError =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          error.response?.data?.msg;
 
-    const backendError =
-      error.response?.data?.message ||
-      error.response?.data?.error ||
-      error.response?.data?.msg;
-
-    setError(backendError || "Something went wrong");
-  }
-};
-
+        setError(backendError || "Something went wrong");
+      }
+    };
+  };
   return (
     <>
       <div className="h-screen w-screen flex justify-center items-center bg-cover bg-[url('https://wallpapers.com/images/hd/professional-photo-background-1920-x-1229-e3s6g0zxa6qx502x.jpg')]">
