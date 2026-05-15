@@ -38,7 +38,16 @@ const Login = () => {
       const data = response.data;
 
       localStorage.setItem("token", data.token);
-      navigate("/dashboard", { replace: true });
+      localStorage.setItem("user", JSON.stringify(data.user)); // 🔥 important
+
+      // 🔥 Role-based redirect
+      if (data.user.role === "recruiter") {
+        navigate("/recruiter/dashboard", { replace: true });
+      } else if (data.user.role === "admin") {
+        navigate("/admin/dashboard", { replace: true });
+      } else {
+        navigate("/dashboard", { replace: true }); // user
+      }
     } catch (err) {
       console.log(err);
 
