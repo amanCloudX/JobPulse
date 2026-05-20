@@ -1,19 +1,18 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
 import API from "../api/axios";
-import { useNavigate } from "react-router-dom";
-import { Trash2 } from "lucide-react";
+
+import JobInfo from "../components/recruiter/JobInfo";
+import ApplicantsTable from "../components/recruiter/ApplicantsTable";
+import EmptyState from "../components/recruiter/EmptyState";
 
 const RecruiterDashboard = () => {
-  const navigate = useNavigate();
-
   const [jobs, setJobs] = useState([]);
   const [applications, setApplications] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
 
   const token = localStorage.getItem("token");
 
-  // FETCH RECRUITER JOBS
+  // ================= FETCH JOBS =================
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -24,6 +23,12 @@ const RecruiterDashboard = () => {
         });
 
         setJobs(res.data);
+
+        // FIRST JOB AUTO SELECT
+        if (res.data.length > 0) {
+          setSelectedJob(res.data[0]);
+          fetchApplicants(res.data[0]._id);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -32,7 +37,7 @@ const RecruiterDashboard = () => {
     fetchJobs();
   }, []);
 
-  // FETCH APPLICANTS
+  // ================= FETCH APPLICANTS =================
   const fetchApplicants = async (jobId) => {
     try {
       const res = await API.get(`/applications/applicantsforjob/${jobId}`, {
@@ -47,7 +52,7 @@ const RecruiterDashboard = () => {
     }
   };
 
-  // UPDATE STATUS
+  // ================= UPDATE STATUS =================
   const updateStatus = async (appId, status) => {
     try {
       await API.put(
@@ -60,7 +65,6 @@ const RecruiterDashboard = () => {
         },
       );
 
-      // UI UPDATE
       setApplications((prev) =>
         prev.map((app) => (app._id === appId ? { ...app, status } : app)),
       );
@@ -69,7 +73,7 @@ const RecruiterDashboard = () => {
     }
   };
 
-  // DELETE APPLICANT
+  // ================= DELETE APPLICANT =================
   const deleteApplicant = async (appId) => {
     try {
       const confirmDelete = window.confirm(
@@ -84,7 +88,6 @@ const RecruiterDashboard = () => {
         },
       });
 
-      // UI UPDATE
       setApplications((prev) => prev.filter((app) => app._id !== appId));
     } catch (error) {
       console.log(error);
@@ -92,229 +95,75 @@ const RecruiterDashboard = () => {
   };
 
   return (
-    <>
-      <div className="flex h-screen">
-        {/* LEFT SIDEBAR */}
-        <div className="w-[280px] bg-gray-900 text-white flex flex-col p-6 shadow-2xl">
-          {/* HEADER */}
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold text-blue-400">
-              Recruiter Panel
-            </h2>
+    <div className="space-y-6">
+      {/* JOB LIST */}
+      <div>
+        <h1 className="text-3xl font-bold text-gray-800">
+          Recruiter Dashboard
+        </h1>
 
-            <p className="text-gray-400 text-sm mt-1">
-              Manage jobs & applicants
+        <p className="text-gray-500 mt-1">Manage your jobs and applicants</p>
+      </div>
+
+      {/* JOB CARDS */}
+      <div className="flex gap-4 overflow-x-auto pb-2">
+        {jobs.map((job) => (
+          <button
+            key={job._id}
+            onClick={() => {
+              setSelectedJob(job);
+              fetchApplicants(job._id);
+            }}
+            className={`min-w-[250px] rounded-2xl p-5 text-left transition border ${
+              selectedJob?._id === job._id
+                ? "bg-blue-600 text-white border-blue-600"
+                : "bg-white border-gray-200 hover:border-blue-400"
+            }`}
+          >
+            <h3 className="font-bold text-lg">{job.title}</h3>
+
+            <p
+              className={`text-sm mt-1 ${
+                selectedJob?._id === job._id ? "text-blue-100" : "text-gray-500"
+              }`}
+            >
+              {job.company}
             </p>
-          </div>
 
-          {/* MENU */}
-          <div className="space-y-3 mb-8">
-            {/* DASHBOARD */}
-            <button className="w-full flex items-center gap-3 text-left px-4 py-3 rounded-xl bg-gray-800 hover:bg-blue-500 transition duration-200">
-              <span className="text-lg">📊</span>
-
-              <span className="font-medium">Dashboard</span>
-            </button>
-
-            {/* ADD JOB */}
-            <button
-              onClick={() => navigate("/add-job")}
-              className="w-full flex items-center gap-3 text-left px-4 py-3 rounded-xl bg-gray-800 hover:bg-blue-500 transition duration-200"
-            >
-              <span className="text-lg">➕</span>
-
-              <span className="font-medium">Add Job</span>
-            </button>
-
-            {/* MY JOBS */}
-            <button
-              onClick={() => navigate("/my-jobs")}
-              className="w-full flex items-center gap-3 text-left px-4 py-3 rounded-xl bg-gray-800 hover:bg-blue-500 transition duration-200"
-            >
-              <span className="text-lg">💼</span>
-
-              <span className="font-medium">My Jobs</span>
-            </button>
-
-            <button
-              onClick={() => navigate("/recruiter-profile")}
-              className="w-full flex items-center gap-3 text-left px-4 py-3 rounded-xl bg-gray-800 hover:bg-blue-500 transition duration-200"
-            >
-              <span className="text-lg">👤</span>
-              <span className="font-medium">Profile</span>
-            </button>
-          </div>
-
-          {/* JOB LIST */}
-          <div className="flex-1 overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-lg">My Jobs</h3>
-
-              <span className="bg-blue-500 text-xs px-2 py-1 rounded-full">
-                {jobs.length}
+            <div className="mt-4">
+              <span
+                className={`text-xs px-3 py-1 rounded-full ${
+                  selectedJob?._id === job._id ? "bg-white/20" : "bg-gray-100"
+                }`}
+              >
+                {job.location}
               </span>
             </div>
-
-            {/* JOBS */}
-            <div className="overflow-y-auto pr-1 space-y-3">
-              {jobs.map((job) => (
-                <div
-                  key={job._id}
-                  onClick={() => {
-                    setSelectedJob(job);
-                    fetchApplicants(job._id);
-                  }}
-                  className={`p-4 rounded-2xl cursor-pointer transition duration-200 border ${
-                    selectedJob?._id === job._id
-                      ? "bg-blue-500 border-blue-400 shadow-lg"
-                      : "bg-gray-800 border-gray-700 hover:bg-gray-700"
-                  }`}
-                >
-                  <h4 className="font-semibold text-white">{job.title}</h4>
-
-                  <p className="text-sm text-gray-300 mt-1">{job.company}</p>
-
-                  <div className="mt-3 flex items-center justify-between">
-                    <span className="text-xs bg-gray-700 px-2 py-1 rounded-full">
-                      {job.location}
-                    </span>
-
-                    <span className="text-xs text-gray-300">View</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT SIDE */}
-        <div className="flex-1 p-6 bg-gray-100 overflow-y-auto">
-          {!selectedJob ? (
-            <div className="h-full flex items-center justify-center">
-              <p className="text-gray-500 text-lg">
-                Select a job to view applicants
-              </p>
-            </div>
-          ) : (
-            <>
-              {/* JOB INFO */}
-              <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
-                <h1 className="text-3xl font-bold text-gray-800">
-                  {selectedJob.title}
-                </h1>
-
-                <p className="text-gray-600 mt-2">
-                  {selectedJob.company} • {selectedJob.location}
-                </p>
-
-                <div className="mt-4 inline-block bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-medium">
-                  {applications.length} Applicants
-                </div>
-              </div>
-
-              {/* NO APPLICANTS */}
-              {applications.length === 0 ? (
-                <div className="bg-white rounded-2xl shadow-md p-10 text-center">
-                  <p className="text-gray-500 text-lg">No applicants yet</p>
-                </div>
-              ) : (
-                /* TABLE */
-                <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-                  <table className="w-full">
-                    <thead className="bg-gray-900 text-white">
-                      <tr>
-                        <th className="p-4 text-left">Applicant</th>
-
-                        <th className="text-left">Email</th>
-
-                        <th className="text-center">Status</th>
-
-                        <th className="text-center">Actions</th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      {applications.map((app) => (
-                        <tr
-                          key={app._id}
-                          className="border-b hover:bg-gray-50 transition"
-                        >
-                          {/* NAME */}
-                          <td className="p-4 font-medium text-gray-800">
-                            {app.applicant?.name}
-                          </td>
-
-                          {/* EMAIL */}
-                          <td className="text-gray-600">
-                            {app.applicant?.email}
-                          </td>
-
-                          {/* STATUS */}
-                          <td className="text-center">
-                            <span
-                              className={`px-3 py-1 rounded-full text-white text-sm font-medium ${
-                                app.status === "applied"
-                                  ? "bg-yellow-500"
-                                  : app.status === "interview"
-                                    ? "bg-green-500"
-                                    : "bg-red-500"
-                              }`}
-                            >
-                              {app.status}
-                            </span>
-                          </td>
-
-                          {/* ACTIONS */}
-                          <td className="p-4">
-                            <div className="flex justify-center items-center gap-2">
-                              {/* INTERVIEW */}
-                              <button
-                                onClick={() =>
-                                  updateStatus(app._id, "interview")
-                                }
-                                className={`px-3 py-1 rounded-lg text-sm font-medium transition ${
-                                  app.status === "interview"
-                                    ? "bg-green-600 text-white"
-                                    : "bg-green-100 text-green-700 hover:bg-green-200"
-                                }`}
-                              >
-                                Interview
-                              </button>
-
-                              {/* REJECT */}
-                              <button
-                                onClick={() =>
-                                  updateStatus(app._id, "rejected")
-                                }
-                                className={`px-3 py-1 rounded-lg text-sm font-medium transition ${
-                                  app.status === "rejected"
-                                    ? "bg-red-600 text-white"
-                                    : "bg-red-100 text-red-700 hover:bg-red-200"
-                                }`}
-                              >
-                                Reject
-                              </button>
-
-                              {/* DELETE */}
-                              <button
-                                onClick={() => deleteApplicant(app._id)}
-                                className="w-9 h-9 ml-5 flex items-center justify-center rounded-lg bg-gray-800 hover:bg-red-600 text-white transition duration-200"
-                              >
-                                <Trash2 size={18} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </>
-          )}
-        </div>
+          </button>
+        ))}
       </div>
-    </>
+
+      {/* MAIN CONTENT */}
+      {!selectedJob ? (
+        <EmptyState text="Select a job to view applicants" />
+      ) : (
+        <>
+          {/* JOB INFO */}
+          <JobInfo selectedJob={selectedJob} applications={applications} />
+
+          {/* APPLICANTS */}
+          {applications.length === 0 ? (
+            <EmptyState text="No applicants yet" />
+          ) : (
+            <ApplicantsTable
+              applications={applications}
+              updateStatus={updateStatus}
+              deleteApplicant={deleteApplicant}
+            />
+          )}
+        </>
+      )}
+    </div>
   );
 };
 

@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import API from "../api/axios";
 import { useNavigate } from "react-router-dom";
 
+import LoadingSpinner from "../components/common/LoadingSpinner";
+import EmptyState from "../components/recruiter/EmptyState";
+
 const RecruiterProfile = () => {
   const navigate = useNavigate();
 
@@ -11,7 +14,7 @@ const RecruiterProfile = () => {
 
   const token = localStorage.getItem("token");
 
-  // FETCH PROFILE + JOBS
+  // ================= FETCH PROFILE + JOBS =================
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -22,7 +25,7 @@ const RecruiterProfile = () => {
           },
         });
 
-        // MY JOBS
+        // JOBS
         const jobsRes = await API.get("/jobs/myjobs", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -41,58 +44,56 @@ const RecruiterProfile = () => {
     fetchData();
   }, []);
 
-  // LOGOUT
+  // ================= LOGOUT =================
   const handleLogout = () => {
     localStorage.removeItem("token");
+
     navigate("/");
   };
 
+  // ================= LOADING =================
   if (loading) {
-    return (
-      <div className="h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-lg text-gray-500">Loading profile...</p>
-      </div>
-    );
+    return <LoadingSpinner text="Loading profile..." />;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-gray-100 to-indigo-100 p-6">
-      {/* HEADER */}
-      <div className="bg-white rounded-3xl shadow-xl p-8">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+    <div className="bg-gradient-to-br from-blue-50 via-gray-100 to-indigo-100 min-h-screen p-4 md:p-6">
+      {/* ================= PROFILE HEADER ================= */}
+      <div className="bg-white rounded-3xl shadow-xl p-5 md:p-8 border border-gray-200">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           {/* LEFT */}
-          <div className="flex items-center gap-5">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
             {/* AVATAR */}
-            <div className="w-24 h-24 rounded-full bg-blue-600 text-white flex items-center justify-center text-4xl font-bold shadow-lg">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex items-center justify-center text-4xl font-bold shadow-lg">
               {profile?.name?.charAt(0).toUpperCase()}
             </div>
 
             {/* INFO */}
-            <div>
-              <h1 className="text-4xl font-bold text-gray-800">
+            <div className="text-center sm:text-left">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
                 {profile?.name}
               </h1>
 
-              <p className="text-gray-500 mt-1">{profile?.email}</p>
+              <p className="text-gray-500 mt-2 break-all">{profile?.email}</p>
 
-              <div className="mt-3 inline-block bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-semibold">
+              <div className="mt-4 inline-block bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-semibold">
                 Recruiter
               </div>
             </div>
           </div>
 
           {/* BUTTONS */}
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
             <button
               onClick={() => navigate("/my-jobs")}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-2xl font-medium shadow-md transition"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-2xl font-medium shadow-md transition w-full"
             >
               My Jobs
             </button>
 
             <button
               onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-2xl font-medium shadow-md transition"
+              className="bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-2xl font-medium shadow-md transition w-full"
             >
               Logout
             </button>
@@ -100,8 +101,8 @@ const RecruiterProfile = () => {
         </div>
       </div>
 
-      {/* STATS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+      {/* ================= STATS ================= */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-8">
         {/* TOTAL JOBS */}
         <div className="bg-white rounded-3xl shadow-lg p-6 border-l-4 border-blue-500">
           <h2 className="text-gray-500 text-sm font-medium">
@@ -128,43 +129,62 @@ const RecruiterProfile = () => {
         </div>
       </div>
 
-      {/* RECENT JOBS */}
-      <div className="bg-white rounded-3xl shadow-lg p-6 mt-8">
-        <div className="flex items-center justify-between mb-6">
+      {/* ================= RECENT JOBS ================= */}
+      <div className="bg-white rounded-3xl shadow-lg p-5 md:p-6 mt-8 border border-gray-200">
+        {/* TOP */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Recent Job Posts</h2>
 
           <button
             onClick={() => navigate("/add-job")}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-2xl transition font-medium"
           >
             + Add Job
           </button>
         </div>
 
+        {/* EMPTY */}
         {jobs.length === 0 ? (
-          <div className="text-center py-10">
-            <p className="text-gray-500 text-lg">No jobs posted yet</p>
-          </div>
+          <EmptyState
+            title="No jobs posted yet"
+            subtitle="Start posting jobs to attract candidates"
+            buttonText="Create Job"
+            buttonAction={() => navigate("/add-job")}
+          />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          /* JOB GRID */
+          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
             {jobs.slice(0, 6).map((job) => (
               <div
                 key={job._id}
-                className="border border-gray-200 rounded-2xl p-5 hover:shadow-lg transition"
+                className="border border-gray-200 rounded-3xl p-5 hover:shadow-xl transition duration-300 bg-gray-50 hover:bg-white"
               >
-                <h3 className="text-xl font-bold text-gray-800">{job.title}</h3>
+                {/* TITLE */}
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-800">
+                      {job.title}
+                    </h3>
 
-                <p className="text-gray-500 mt-1">{job.company}</p>
+                    <p className="text-gray-500 mt-1">{job.company}</p>
+                  </div>
 
-                <div className="mt-4 space-y-2">
-                  <p className="text-sm text-gray-600">📍 {job.location}</p>
-
-                  <p className="text-sm text-gray-600">💰 ${job.salary}</p>
+                  <span className="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-medium whitespace-nowrap">
+                    Active
+                  </span>
                 </div>
 
+                {/* INFO */}
+                <div className="mt-5 space-y-3">
+                  <p className="text-sm text-gray-600">📍 {job.location}</p>
+
+                  <p className="text-sm text-gray-600">💰 ₹{job.salary}</p>
+                </div>
+
+                {/* BUTTON */}
                 <button
-                  onClick={() => navigate(`/jobs/${job._id}`)}
-                  className="mt-5 w-full bg-gray-900 hover:bg-blue-600 text-white py-2 rounded-xl transition"
+                  onClick={() => navigate("/my-jobs")}
+                  className="mt-6 w-full bg-gray-900 hover:bg-blue-600 text-white py-3 rounded-2xl transition font-medium"
                 >
                   View Job
                 </button>
