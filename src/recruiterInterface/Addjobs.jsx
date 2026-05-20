@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 
 import FormInput from "../components/form/FormInput";
-import FormTextarea from "../components/form/FormTextarea";
+import FormTextarea from "../components/form/FormTextArea";
 import PrimaryButton from "../components/form/PrimaryButton";
 
 const Addjobs = () => {
