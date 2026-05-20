@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Menu } from "lucide-react";
 
-import RecruiterSidebar from "../components/recruiter/RecruiterSidebar";
+import RecruiterSidebar from "../components/recruiter/RecruiterSideBar";
 
 const RecruiterLayout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
