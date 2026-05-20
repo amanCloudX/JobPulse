@@ -1,9 +1,15 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { X } from "lucide-react";
+import { X, LogOut } from "lucide-react";
 
 const RecruiterSidebar = ({ closeMenu }) => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // LOGOUT
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
 
   const menuItems = [
     {
@@ -68,6 +74,18 @@ const RecruiterSidebar = ({ closeMenu }) => {
             <span className="font-medium">{item.name}</span>
           </button>
         ))}
+      </div>
+
+      {/* LOGOUT BUTTON */}
+      <div className="mt-auto pt-6">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500 hover:bg-red-600 transition"
+        >
+          <LogOut size={20} />
+
+          <span className="font-medium">Logout</span>
+        </button>
       </div>
     </div>
   );

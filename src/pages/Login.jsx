@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Logo from "../components/logo";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 
@@ -9,10 +8,12 @@ const Login = () => {
     email: "",
     password: "",
   });
+
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
+  // ================= HANDLE CHANGE =================
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -20,10 +21,12 @@ const Login = () => {
     });
   };
 
+  // ================= SUBMIT =================
   const submitHandler = async (e) => {
     e.preventDefault();
 
     setError("");
+
     if (!form.email || !form.password) {
       setError("All Fields Are Required");
       return;
@@ -35,112 +38,154 @@ const Login = () => {
           "Content-Type": "application/json",
         },
       });
+
       const data = response.data;
 
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user)); // 🔥 important
+      localStorage.setItem("user", JSON.stringify(data.user));
 
-      // 🔥 Role-based redirect
+      // ROLE BASED REDIRECT
       if (data.user.role === "recruiter") {
         navigate("/recruiter/dashboard", { replace: true });
       } else if (data.user.role === "admin") {
         navigate("/admin/dashboard", { replace: true });
       } else {
-        navigate("/dashboard", { replace: true }); // user
+        navigate("/dashboard", { replace: true });
       }
     } catch (err) {
       console.log(err);
 
       if (err.response) {
-        // server responded with error
         setError("Invalid Email or Password");
       } else {
-        // network or other error
         setError("Something went wrong");
       }
     }
   };
 
   return (
-    <form onSubmit={submitHandler}>
-      <div className="h-screen flex items-center justify-center bg-gradient-to-r from-blue-300 to-pink-300">
-        {/* Main Card */}
-        <div className="w-[900px] h-[500px] bg-white rounded-2xl shadow-2xl flex overflow-hidden">
-          {/* LEFT SIDE - FORM */}
+    <div className="min-h-screen bg-gradient-to-br from-blue-300 via-purple-200 to-pink-300 flex items-center justify-center px-4 py-8">
+      {/* MAIN CARD */}
+      <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col lg:flex-row">
+        {/* ================= LEFT SIDE ================= */}
+        <div className="w-full lg:w-1/2 p-6 sm:p-10 lg:p-12 flex flex-col justify-center">
+          {/* LOGO */}
+          <div className="mb-6">
+            <Logo />
+          </div>
 
-          <div className="w-1/2 p-10 flex flex-col justify-center">
-            <Logo className="mb-5" />
+          {/* HEADING */}
+          <div className="mb-8">
+            <h2 className="text-sm font-semibold text-gray-500 mb-2">
+              Welcome Back 👋
+            </h2>
 
-            <h2 className="text-sm font-semibold mt-9 mb-2">Welcome 👋</h2>
-            <h1 className="text-3xl font-bold mb-6">Log In</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">
+              Login to JobPulse
+            </h1>
 
-            {/* Email */}
-            <div className="mb-4">
-              <label className="text-sm">Email</label>
+            <p className="text-gray-500 mt-3 text-sm sm:text-base">
+              Find jobs, manage applications and grow your career.
+            </p>
+          </div>
+
+          {/* FORM */}
+          <form onSubmit={submitHandler} className="space-y-5">
+            {/* EMAIL */}
+            <div>
+              <label className="text-sm font-medium text-gray-700">
+                Email Address
+              </label>
+
               <input
                 type="email"
                 name="email"
                 value={form.email}
-                placeholder="Enter Email Here"
+                placeholder="Enter your email"
                 onChange={handleChange}
-                className="w-full mt-1 p-2 border rounded-md outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full mt-2 p-3 sm:p-4 border border-gray-300 rounded-2xl outline-none focus:ring-2 focus:ring-blue-400 transition"
               />
             </div>
 
-            {/* Password */}
-            <div className="mb-4">
-              <label className="text-sm">Password</label>
+            {/* PASSWORD */}
+            <div>
+              <label className="text-sm font-medium text-gray-700">
+                Password
+              </label>
+
               <input
                 type="password"
                 name="password"
                 value={form.password}
-                placeholder="Enter Password Here"
+                placeholder="Enter your password"
                 onChange={handleChange}
-                className="w-full mt-1 p-2 border rounded-md outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full mt-2 p-3 sm:p-4 border border-gray-300 rounded-2xl outline-none focus:ring-2 focus:ring-blue-400 transition"
               />
             </div>
 
-            {/* ❌ Error Message */}
+            {/* ERROR */}
             {error && (
-              <p className="text-red-500 text-sm mb-3 text-center">{error}</p>
+              <div className="bg-red-100 border border-red-300 text-red-600 text-sm p-3 rounded-xl">
+                {error}
+              </div>
             )}
 
-            {/* Button */}
-            <button className="bg-pink-400 text-white py-2 rounded-md hover:bg-pink-500 transition">
+            {/* LOGIN BUTTON */}
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-pink-500 to-blue-500 hover:scale-[1.01] hover:shadow-lg text-white py-3 sm:py-4 rounded-2xl font-semibold transition duration-300"
+            >
               LOGIN →
             </button>
-            <div className="mt-4 text-center">
-              <p className="text-sm">
-                New User?{" "}
-                <span
-                  onClick={() => navigate("/register")}
-                  className="text-blue-500 cursor-pointer hover:underline"
-                >
-                  Register Here
-                </span>
-              </p>
-            </div>
+          </form>
+
+          {/* REGISTER */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              New User?{" "}
+              <span
+                onClick={() => navigate("/register")}
+                className="text-blue-600 font-semibold cursor-pointer hover:underline"
+              >
+                Register Here
+              </span>
+            </p>
           </div>
+        </div>
 
-          {/* RIGHT SIDE - IMAGE */}
-          <div className="w-1/2 bg-blue-100 relative flex items-center justify-center rounded-2xl overflow-hidden">
-            {/* Girl Image */}
-            <img
-              src="/girl.png"
-              alt="girl"
-              className="absolute bottom-0 left-0 w-[85%] max-h-full  object-contain z-1"
-            />
+        {/* ================= RIGHT SIDE ================= */}
+        <div className="hidden lg:flex lg:w-1/2 bg-blue-100 relative items-center justify-center overflow-hidden">
+          {/* BACKGROUND CIRCLE */}
+          <div className="absolute w-[500px] h-[500px] bg-blue-200 rounded-full blur-3xl opacity-40"></div>
 
-            {/* Cactus Image */}
-            <img
-              src="/cactus1.png"
-              alt="cactus"
-              className="absolute bottom-0 right-0 left-45 w-[70%] object-contain"
-            />
+          {/* GIRL IMAGE */}
+          <img
+            src="/girl.png"
+            alt="girl"
+            className="absolute bottom-0 left-0 w-[80%] object-contain z-10"
+          />
+
+          {/* CACTUS */}
+          <img
+            src="/cactus1.png"
+            alt="cactus"
+            className="absolute bottom-0 right-0 w-[45%] object-contain z-0"
+          />
+
+          {/* TEXT */}
+          <div className="absolute top-12 right-10 text-right z-20">
+            <h2 className="text-4xl font-bold text-gray-800 leading-tight">
+              Your Dream Job <br /> Starts Here 🚀
+            </h2>
+
+            <p className="text-gray-600 mt-4 max-w-sm">
+              Connect with recruiters, explore opportunities and build your
+              future with JobPulse.
+            </p>
           </div>
         </div>
       </div>
-    </form>
+    </div>
   );
 };
 

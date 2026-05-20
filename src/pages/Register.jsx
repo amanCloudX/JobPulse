@@ -1,10 +1,8 @@
-import React from "react";
-import Logo from "../components/logo";
+import React, { useState } from "react";
 import { Mail, User, LockKeyhole } from "lucide-react";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import API from "../api/axios";
+import Logo from "../components/logo";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -15,18 +13,21 @@ const Register = () => {
   });
 
   const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
+  // HANDLE CHANGE
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
+
+  // HANDLE SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // validation
     if (
       !formData.name ||
       !formData.email ||
@@ -40,13 +41,15 @@ const Register = () => {
     try {
       const response = await API.post("/auth/register", formData);
 
-      console.log("SUCCESS:", response.data);
+      console.log(response.data);
 
       setError("");
+
       alert("User Registered Successfully");
-      navigate("/"); // optional redirect
+
+      navigate("/");
     } catch (error) {
-      console.log("ERROR:", error);
+      console.log(error);
 
       const backendError =
         error.response?.data?.message || error.response?.data?.error;
@@ -54,86 +57,132 @@ const Register = () => {
       setError(backendError || "Something went wrong");
     }
   };
+
   return (
-    <>
-      <div className="h-screen w-screen flex justify-center items-center bg-cover bg-[url('https://wallpapers.com/images/hd/professional-photo-background-1920-x-1229-e3s6g0zxa6qx502x.jpg')]">
-        <div className="bg-transparent p-8 rounded-lg shadow-md w-100 ">
-          <h2
-            className="text-xl  bg-gradient-to-r 
-from-blue-500 to-purple-600 
-bg-clip-text text-transparent font-bold text-center mb-6"
-          >
-            Register Here
-          </h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 px-4 py-6 overflow-hidden">
+      {/* CARD */}
+      <div className="w-full max-w-2xl bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl border border-white/40 overflow-hidden">
+        {/* TOP STRIP */}
+        <div className="h-3 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {/* Name */}
-            <div className="flex items-center border px-2 py-2 rounded">
-              <User size={20} color="#8e8585" />
-              <input
-                onChange={handleChange}
-                type="text"
-                name="name"
-                value={formData.name}
-                placeholder="Enter Name"
-                className="outline-none w-full ml-2"
-              />
+        <div className="p-6 sm:p-8 md:p-10">
+          {/* LOGO */}
+          <div className="flex justify-center mb-5">
+            <Logo />
+          </div>
+
+          {/* TITLE */}
+          <h1 className="text-3xl md:text-4xl font-bold text-center text-gray-800">
+            Create Account
+          </h1>
+
+          <p className="text-center text-gray-500 mt-3 text-sm md:text-base">
+            Join JobPulse and explore new opportunities 🚀
+          </p>
+
+          {/* FORM */}
+          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+            {/* NAME */}
+            <div>
+              <label className="text-sm font-semibold text-gray-700">
+                Full Name
+              </label>
+
+              <div className="flex items-center mt-2 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition">
+                <User size={20} className="text-blue-500" />
+
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Enter your name"
+                  className="w-full ml-3 outline-none bg-transparent text-gray-700"
+                />
+              </div>
             </div>
 
-            {/* Email */}
-            <div className="flex items-center border px-2 py-2 rounded">
-              <Mail size={20} color="#8e8585" />
-              <input
-                onChange={handleChange}
-                type="email"
-                name="email"
-                value={formData.email}
-                placeholder="Enter Email"
-                className="outline-none w-full ml-2"
-              />
+            {/* EMAIL */}
+            <div>
+              <label className="text-sm font-semibold text-gray-700">
+                Email
+              </label>
+
+              <div className="flex items-center mt-2 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition">
+                <Mail size={20} className="text-blue-500" />
+
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Enter your email"
+                  className="w-full ml-3 outline-none bg-transparent text-gray-700"
+                />
+              </div>
             </div>
 
-            {/* Password */}
-            <div className="flex items-center border px-2 py-2 rounded">
-              <LockKeyhole size={20} color="#8e8585" />
-              <input
-                onChange={handleChange}
-                type="password"
-                name="password"
-                value={formData.password}
-                placeholder="Enter Password"
-                className="outline-none w-full ml-2"
-              />
+            {/* PASSWORD */}
+            <div>
+              <label className="text-sm font-semibold text-gray-700">
+                Password
+              </label>
+
+              <div className="flex items-center mt-2 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition">
+                <LockKeyhole size={20} className="text-blue-500" />
+
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter password"
+                  className="w-full ml-3 outline-none bg-transparent text-gray-700"
+                />
+              </div>
             </div>
 
-            {/* Role */}
-            <select
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="w-full border p-2 rounded "
+            {/* ROLE */}
+            <div>
+              <label className="text-sm font-semibold text-gray-700">
+                Select Role
+              </label>
+
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="w-full mt-2 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+              >
+                <option value="">Choose role</option>
+                <option value="user">User</option>
+                <option value="recruiter">Recruiter</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            {/* ERROR */}
+            {error && (
+              <p className="text-red-500 text-sm text-center font-medium">
+                {error}
+              </p>
+            )}
+
+            {/* BUTTON */}
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3.5 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition duration-300"
             >
-              <option value="">Select your role</option>
-              <option value="user">User</option>
-              <option value="recruiter">Recruiter</option>
-              <option value="admin">Admin</option>
-            </select>
-
-            {/* Button */}
-            <button className="bg-gradient-to-r from-blue-500 to-blue-700 text-white py-2 rounded hover:bg-blue-600 active:scale-95">
               Sign Up
             </button>
 
-            {error && (
-              <p className="text-red-500 text-sm text-center">{error}</p>
-            )}
-
-            <div className="text-center mt-2">
-              <p className="text-sm">
+            {/* LOGIN */}
+            <div className="text-center pt-2">
+              <p className="text-gray-600 text-sm md:text-base">
                 Already have an account?{" "}
                 <span
                   onClick={() => navigate("/")}
-                  className="text-blue-500 cursor-pointer hover:underline font-semibold"
+                  className="text-blue-600 font-semibold cursor-pointer hover:underline"
                 >
                   Sign In
                 </span>
@@ -142,7 +191,7 @@ bg-clip-text text-transparent font-bold text-center mb-6"
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
