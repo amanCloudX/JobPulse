@@ -11,6 +11,9 @@ const Login = () => {
 
   const [error, setError] = useState("");
 
+  // 🔥 LOADING STATE
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   // ================= HANDLE CHANGE =================
@@ -33,6 +36,9 @@ const Login = () => {
     }
 
     try {
+      // 🔥 START LOADING
+      setLoading(true);
+
       const response = await API.post("/auth/login", form, {
         headers: {
           "Content-Type": "application/json",
@@ -60,6 +66,9 @@ const Login = () => {
       } else {
         setError("Something went wrong");
       }
+    } finally {
+      // 🔥 STOP LOADING
+      setLoading(false);
     }
   };
 
@@ -103,7 +112,8 @@ const Login = () => {
                 value={form.email}
                 placeholder="Enter your email"
                 onChange={handleChange}
-                className="w-full mt-2 p-3 sm:p-4 border border-gray-300 rounded-2xl outline-none focus:ring-2 focus:ring-blue-400 transition"
+                disabled={loading}
+                className="w-full mt-2 p-3 sm:p-4 border border-gray-300 rounded-2xl outline-none focus:ring-2 focus:ring-blue-400 transition disabled:bg-gray-100"
               />
             </div>
 
@@ -119,7 +129,8 @@ const Login = () => {
                 value={form.password}
                 placeholder="Enter your password"
                 onChange={handleChange}
-                className="w-full mt-2 p-3 sm:p-4 border border-gray-300 rounded-2xl outline-none focus:ring-2 focus:ring-blue-400 transition"
+                disabled={loading}
+                className="w-full mt-2 p-3 sm:p-4 border border-gray-300 rounded-2xl outline-none focus:ring-2 focus:ring-blue-400 transition disabled:bg-gray-100"
               />
             </div>
 
@@ -133,9 +144,23 @@ const Login = () => {
             {/* LOGIN BUTTON */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-pink-500 to-blue-500 hover:scale-[1.01] hover:shadow-lg text-white py-3 sm:py-4 rounded-2xl font-semibold transition duration-300"
+              disabled={loading}
+              className={`w-full py-3 sm:py-4 rounded-2xl font-semibold transition duration-300 flex items-center justify-center gap-3 ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-gradient-to-r from-pink-500 to-blue-500 hover:scale-[1.01] hover:shadow-lg text-white"
+              }`}
             >
-              LOGIN →
+              {loading ? (
+                <>
+                  {/* SPINNER */}
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+
+                  <span>Logging In...</span>
+                </>
+              ) : (
+                "LOGIN →"
+              )}
             </button>
           </form>
 
