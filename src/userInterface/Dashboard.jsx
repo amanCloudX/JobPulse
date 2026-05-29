@@ -6,8 +6,6 @@ import { Menu, X } from "lucide-react";
 const Dashboard = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // MOBILE MENU
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -42,30 +40,28 @@ const Dashboard = () => {
   // ================= LOGOUT =================
   const handleLogout = () => {
     localStorage.removeItem("token");
-
     navigate("/");
   };
 
   // ================= STATS =================
-  const applied =
-    applications.filter((a) => a.status?.toLowerCase() === "applied").length ||
-    0;
+  const applied = applications.filter(
+    (a) => a.status?.toLowerCase() === "applied",
+  ).length;
 
-  const interview =
-    applications.filter((a) => a.status?.toLowerCase() === "interview")
-      .length || 0;
+  const interview = applications.filter(
+    (a) => a.status?.toLowerCase() === "interview",
+  ).length;
 
-  const rejected =
-    applications.filter((a) => a.status?.toLowerCase() === "rejected").length ||
-    0;
+  const rejected = applications.filter(
+    (a) => a.status?.toLowerCase() === "rejected",
+  ).length;
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="min-h-screen w-full bg-gray-100 overflow-x-hidden">
       {/* ================= DESKTOP SIDEBAR ================= */}
-      <div className="hidden md:flex w-[270px] bg-gray-900 text-white flex-col justify-between p-6 fixed left-0 top-0 h-screen shadow-2xl">
+      <div className="hidden md:flex w-[260px] bg-gray-900 text-white flex-col justify-between p-6 fixed left-0 top-0 h-screen">
         {/* TOP */}
         <div>
-          {/* LOGO */}
           <div className="mb-10">
             <h1 className="text-3xl font-bold text-blue-400">JobPulse</h1>
 
@@ -110,115 +106,104 @@ const Dashboard = () => {
       </div>
 
       {/* ================= MOBILE SIDEBAR ================= */}
-      <div
-        className={`fixed inset-0 z-50 md:hidden transition ${
-          menuOpen ? "visible" : "invisible"
-        }`}
-      >
-        {/* BACKDROP */}
-        <div
-          onClick={() => setMenuOpen(false)}
-          className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${
-            menuOpen ? "opacity-100" : "opacity-0"
-          }`}
-        />
+      {menuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          {/* BACKDROP */}
+          <div
+            onClick={() => setMenuOpen(false)}
+            className="absolute inset-0 bg-black/40"
+          />
 
-        {/* SIDEBAR */}
-        <div
-          className={`absolute left-0 top-0 h-full w-[270px] bg-gray-900 text-white p-6 flex flex-col justify-between transition-transform duration-300 ${
-            menuOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-        >
-          {/* TOP */}
-          <div>
-            {/* HEADER */}
-            <div className="flex items-center justify-between mb-10">
-              <div>
-                <h1 className="text-3xl font-bold text-blue-400">JobPulse</h1>
+          {/* SIDEBAR */}
+          <div className="absolute left-0 top-0 h-full w-[260px] bg-gray-900 text-white p-6 flex flex-col justify-between">
+            <div>
+              {/* HEADER */}
+              <div className="flex items-center justify-between mb-10">
+                <div>
+                  <h1 className="text-3xl font-bold text-blue-400">JobPulse</h1>
 
-                <p className="text-gray-400 text-sm mt-1">
-                  Find your dream job 🚀
-                </p>
+                  <p className="text-gray-400 text-sm mt-1">
+                    Track applications
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => setMenuOpen(false)}
+                  className="bg-gray-800 p-2 rounded-xl"
+                >
+                  <X size={22} />
+                </button>
               </div>
 
-              <button
-                onClick={() => setMenuOpen(false)}
-                className="bg-gray-800 p-2 rounded-xl"
-              >
-                <X size={22} />
-              </button>
+              {/* MENU */}
+              <div className="space-y-3">
+                <button
+                  onClick={() => {
+                    navigate("/dashboard");
+                    setMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 bg-blue-600 px-4 py-3 rounded-2xl"
+                >
+                  <span>📊</span>
+                  <span>Dashboard</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    navigate("/jobs");
+                    setMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 bg-gray-800 px-4 py-3 rounded-2xl"
+                >
+                  <span>💼</span>
+                  <span>Jobs</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    navigate("/profile");
+                    setMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 bg-gray-800 px-4 py-3 rounded-2xl"
+                >
+                  <span>👤</span>
+                  <span>Profile</span>
+                </button>
+              </div>
             </div>
 
-            {/* MENU */}
-            <div className="space-y-3">
-              <button
-                onClick={() => {
-                  navigate("/dashboard");
-                  setMenuOpen(false);
-                }}
-                className="w-full flex items-center gap-3 bg-blue-600 px-4 py-3 rounded-2xl"
-              >
-                <span>📊</span>
-                <span>Dashboard</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  navigate("/jobs");
-                  setMenuOpen(false);
-                }}
-                className="w-full flex items-center gap-3 bg-gray-800 hover:bg-gray-700 px-4 py-3 rounded-2xl transition"
-              >
-                <span>💼</span>
-                <span>Jobs</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  navigate("/profile");
-                  setMenuOpen(false);
-                }}
-                className="w-full flex items-center gap-3 bg-gray-800 hover:bg-gray-700 px-4 py-3 rounded-2xl transition"
-              >
-                <span>👤</span>
-                <span>Profile</span>
-              </button>
-            </div>
+            {/* LOGOUT */}
+            <button
+              onClick={handleLogout}
+              className="w-full bg-red-500 hover:bg-red-600 py-3 rounded-2xl font-semibold"
+            >
+              Logout
+            </button>
           </div>
-
-          {/* LOGOUT */}
-          <button
-            onClick={handleLogout}
-            className="w-full bg-red-500 hover:bg-red-600 py-3 rounded-2xl font-semibold transition"
-          >
-            Logout
-          </button>
         </div>
-      </div>
+      )}
 
       {/* ================= MAIN CONTENT ================= */}
-      <div className="flex-1 md:ml-[270px]">
+      <div className="md:ml-[260px] min-h-screen">
         {/* MOBILE TOPBAR */}
-        <div className="md:hidden bg-gray-900 text-white px-4 py-4 flex items-center justify-between sticky top-0 z-40 shadow-lg">
-          {/* LEFT */}
+        <div className="md:hidden bg-gray-900 text-white px-4 py-4 flex items-center justify-between sticky top-0 z-40">
           <div>
             <h1 className="text-2xl font-bold text-blue-400">JobPulse</h1>
 
-            <p className="text-xs text-gray-400">Track applications</p>
+            <p className="text-xs text-gray-400">Track your applications</p>
           </div>
 
           {/* HAMBURGER */}
           <button
             onClick={() => setMenuOpen(true)}
-            className="w-11 h-11 rounded-xl bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition"
+            className="w-11 h-11 rounded-xl bg-gray-800 flex items-center justify-center"
           >
             <Menu size={24} />
           </button>
         </div>
 
-        {/* PAGE */}
-        <div className="p-4 md:p-8 max-w-7xl mx-auto">
-          {/* LOADING */}
+        {/* CONTENT */}
+        <div className="w-full px-4 py-6 md:p-8">
           {loading ? (
             <div className="h-[70vh] flex items-center justify-center">
               <p className="text-lg font-medium text-gray-500">
@@ -239,115 +224,111 @@ const Dashboard = () => {
               </div>
 
               {/* STATS */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 mb-8">
-                {/* APPLIED */}
-                <div className="bg-white rounded-3xl shadow-md p-6 border-l-4 border-blue-500">
-                  <h2 className="text-gray-500 text-sm font-medium">Applied</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
+                <div className="bg-white rounded-3xl shadow-sm p-6 border-l-4 border-blue-500">
+                  <h2 className="text-gray-500 text-sm">Applied</h2>
 
-                  <p className="text-4xl font-bold text-blue-600 mt-3">
+                  <p className="text-4xl font-bold text-blue-600 mt-2">
                     {applied}
                   </p>
                 </div>
 
-                {/* INTERVIEW */}
-                <div className="bg-white rounded-3xl shadow-md p-6 border-l-4 border-green-500">
-                  <h2 className="text-gray-500 text-sm font-medium">
-                    Interview
-                  </h2>
+                <div className="bg-white rounded-3xl shadow-sm p-6 border-l-4 border-green-500">
+                  <h2 className="text-gray-500 text-sm">Interview</h2>
 
-                  <p className="text-4xl font-bold text-green-600 mt-3">
+                  <p className="text-4xl font-bold text-green-600 mt-2">
                     {interview}
                   </p>
                 </div>
 
-                {/* REJECTED */}
-                <div className="bg-white rounded-3xl shadow-md p-6 border-l-4 border-red-500">
-                  <h2 className="text-gray-500 text-sm font-medium">
-                    Rejected
-                  </h2>
+                <div className="bg-white rounded-3xl shadow-sm p-6 border-l-4 border-red-500">
+                  <h2 className="text-gray-500 text-sm">Rejected</h2>
 
-                  <p className="text-4xl font-bold text-red-600 mt-3">
+                  <p className="text-4xl font-bold text-red-600 mt-2">
                     {rejected}
                   </p>
                 </div>
               </div>
 
               {/* APPLICATIONS */}
-              <div className="bg-white rounded-3xl shadow-md overflow-hidden">
+              <div className="bg-white rounded-3xl shadow-sm overflow-hidden">
                 {/* HEADER */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-5 border-b">
+                <div className="p-5 border-b">
                   <h2 className="text-2xl font-bold text-gray-800">
                     Recent Applications
                   </h2>
 
-                  <span className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 mt-1">
                     {applications.length} Applications
-                  </span>
+                  </p>
                 </div>
 
-                {/* EMPTY */}
-                {applications.length === 0 ? (
-                  <div className="p-10 text-center">
-                    <p className="text-gray-500 text-lg">
-                      No applications yet 🚀
-                    </p>
-
-                    <button
-                      onClick={() => navigate("/jobs")}
-                      className="mt-5 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl transition"
+                {/* MOBILE CARDS */}
+                <div className="block md:hidden">
+                  {applications.map((app) => (
+                    <div
+                      key={app._id}
+                      className="p-4 border-b last:border-none"
                     >
-                      Browse Jobs
-                    </button>
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full min-w-[650px]">
-                      <thead className="bg-gray-900 text-white">
-                        <tr>
-                          <th className="p-4 text-left">Job Title</th>
+                      <h3 className="font-semibold text-gray-800">
+                        {app.job?.title}
+                      </h3>
 
-                          <th className="text-left">Company</th>
+                      <p className="text-gray-500 mt-1">{app.job?.company}</p>
 
-                          <th className="text-center">Status</th>
+                      <span
+                        className={`inline-block mt-3 px-4 py-1 rounded-full text-white text-sm ${
+                          app.status === "applied"
+                            ? "bg-blue-500"
+                            : app.status === "interview"
+                              ? "bg-green-500"
+                              : "bg-red-500"
+                        }`}
+                      >
+                        {app.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* DESKTOP TABLE */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-900 text-white">
+                      <tr>
+                        <th className="p-4 text-left">Job Title</th>
+                        <th className="text-left">Company</th>
+                        <th className="text-center">Status</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {applications.map((app) => (
+                        <tr key={app._id} className="border-b">
+                          <td className="p-4 font-semibold">
+                            {app.job?.title}
+                          </td>
+
+                          <td>{app.job?.company}</td>
+
+                          <td className="text-center">
+                            <span
+                              className={`px-4 py-1 rounded-full text-white text-sm ${
+                                app.status === "applied"
+                                  ? "bg-blue-500"
+                                  : app.status === "interview"
+                                    ? "bg-green-500"
+                                    : "bg-red-500"
+                              }`}
+                            >
+                              {app.status}
+                            </span>
+                          </td>
                         </tr>
-                      </thead>
-
-                      <tbody>
-                        {applications.map((app) => (
-                          <tr
-                            key={app._id}
-                            className="border-b hover:bg-gray-50 transition"
-                          >
-                            {/* JOB */}
-                            <td className="p-4 font-semibold text-gray-800">
-                              {app.job?.title}
-                            </td>
-
-                            {/* COMPANY */}
-                            <td className="text-gray-600">
-                              {app.job?.company}
-                            </td>
-
-                            {/* STATUS */}
-                            <td className="text-center">
-                              <span
-                                className={`px-4 py-1.5 rounded-full text-white text-sm font-medium ${
-                                  app.status === "applied"
-                                    ? "bg-blue-500"
-                                    : app.status === "interview"
-                                      ? "bg-green-500"
-                                      : "bg-red-500"
-                                }`}
-                              >
-                                {app.status}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </>
           )}
